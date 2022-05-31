@@ -1,5 +1,5 @@
-import { polyfill as polyfillEncoding } from 'react-native-polyfill-globals/src/encoding';
-import { polyfill as polyfillReadableStream } from 'react-native-polyfill-globals/src/readable-stream';
+import {polyfill as polyfillEncoding} from 'react-native-polyfill-globals/src/encoding';
+import {polyfill as polyfillReadableStream} from 'react-native-polyfill-globals/src/readable-stream';
 
 polyfillReadableStream();
 polyfillEncoding();

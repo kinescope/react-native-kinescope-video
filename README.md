@@ -20,6 +20,23 @@ yarn add install @kinescope/react-kinescope-player react-native-video @react-nat
 - [react-native-video](https://github.com/react-native-video/react-native-video/blob/master/API.md)
 
 ## Install android (react-native >= 0.68.0)
+
+### Use exoplayer
+```javascript
+//file: react-native.config.js
+module.exports = {
+	dependencies: {
+		'react-native-video': {
+			platforms: {
+				android: {
+					sourceDir: '../node_modules/react-native-video/android-exoplayer',
+				},
+			},
+		},
+	},
+};
+```
+or
 ```
 // file: android/settings.gradle
 
@@ -30,7 +47,8 @@ include ':react-native-video'
 project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android-exoplayer')
 ```
 
-```grable
+### Packages storage
+```
 // file: android/build.gradle
 
 allprojects {
@@ -38,6 +56,12 @@ allprojects {
         jcenter()
     }
 }
+```
+
+## Install iOS
+
+```
+npx pod-install
 ```
 
 ## Props including [react-native-video](https://github.com/react-native-video/react-native-video/blob/master/API.md#configurable-props)

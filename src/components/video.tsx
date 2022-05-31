@@ -1,5 +1,5 @@
 import React, {ForwardedRef, forwardRef, useCallback, useEffect, useState} from 'react';
-import {Image, ImageResizeMode, View} from 'react-native';
+import {Image, ImageResizeMode, Platform, View} from 'react-native';
 import ReactVideo, {
 	OnLoadData,
 	OnProgressData,
@@ -135,13 +135,18 @@ function ReactNativeKinescopeVideo(
 		);
 	}
 
-	const source = {uri: manifest.dashLink, type: 'mpd'};
+	const getSource = () => {
+		if (Platform.OS === 'ios') {
+			return {uri: manifest.hlsLink, type: 'm3u8'};
+		}
+		return {uri: manifest.dashLink, type: 'mpd'};
+	};
 
 	return (
 		<ReactVideo
 			ref={ref}
 			{...rest}
-			source={source}
+			source={getSource()}
 			poster={manifest.posterUrl}
 			textTracks={textTracks ?? manifest.subtitles}
 			posterResizeMode={posterResizeMode}
@@ -157,9 +162,6 @@ function ReactNativeKinescopeVideo(
 			onEnd={handleEnd}
 			onFullscreenPlayerDidPresent={handleFullscreenPlayerDidPresent}
 			onFullscreenPlayerWillPresent={handleFullscreenPlayerWillPresent}
-			onPlaybackRateChange={({playbackRate}) => {
-				console.log('onPlaybackRateChange', playbackRate);
-			}}
 		/>
 	);
 }

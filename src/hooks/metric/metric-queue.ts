@@ -44,7 +44,7 @@ export class MetricQueue {
 		});
 		const batchData = Batch.toBinary(batchMessage);
 
-		fetch(url, {body: batchData, method: 'POST', keepalive: true}).then((data) => {
+		fetch(url, {body: batchData, method: 'POST', keepalive: true}).then(data => {
 			console.log('fetch', data);
 		});
 
