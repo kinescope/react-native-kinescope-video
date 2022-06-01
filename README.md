@@ -13,7 +13,7 @@ npm --save install @kinescope/react-kinescope-player react-native-video @react-n
 Using yarn:
 
 ```sh
-yarn add install @kinescope/react-kinescope-player react-native-video @react-native-async-storage/async-storage
+yarn add @kinescope/react-kinescope-player react-native-video @react-native-async-storage/async-storage
 ```
 
 ## Useful resources
