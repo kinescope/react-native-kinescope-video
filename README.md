@@ -7,13 +7,13 @@
 Using npm:
 
 ```sh
-npm --save install @kinescope/react-kinescope-player react-native-video @react-native-async-storage/async-storage
+npm --save install @kinescope/react-native-kinescope-video react-native-video @react-native-async-storage/async-storage
 ```
 
 Using yarn:
 
 ```sh
-yarn add @kinescope/react-kinescope-player react-native-video @react-native-async-storage/async-storage
+yarn add @kinescope/react-native-kinescope-video react-native-video @react-native-async-storage/async-storage
 ```
 
 ## Useful resources
