@@ -147,13 +147,6 @@ function ReactNativeKinescopeVideo(
 		return textTracks ?? manifest.subtitles;
 	};
 
-	const getSelectedTextTrack = () => {
-		if (!loadingVideo) {
-			return undefined;
-		}
-		return selectedTextTrack;
-	};
-
 	const getSource = () => {
 		if (Platform.OS === 'ios') {
 			return {uri: manifest.hlsLink, type: 'm3u8'};
@@ -167,7 +160,7 @@ function ReactNativeKinescopeVideo(
 			{...rest}
 			source={getSource()}
 			poster={manifest.posterUrl}
-			selectedTextTrack={getSelectedTextTrack()}
+			selectedTextTrack={selectedTextTrack}
 			textTracks={getTextTracks()}
 			posterResizeMode={posterResizeMode}
 			style={style}
