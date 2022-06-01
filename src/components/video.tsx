@@ -141,6 +141,9 @@ function ReactNativeKinescopeVideo(
 	}
 
 	const getTextTracks = () => {
+		if(Platform.OS === 'android') {
+			return textTracks ?? manifest.subtitles;
+		}
 		if (!loadingVideo) {
 			return undefined;
 		}
