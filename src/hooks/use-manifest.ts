@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {TextTrackType} from 'react-native-video';
 import {
 	ManifestEventsTypes,
 	ManifestEventLoadTypes,
@@ -19,7 +20,7 @@ function transformSubtitles(subtitles: any[]): SubtitleTypes[] {
 	return subtitles.map(subtitle => ({
 		title: subtitle.description,
 		language: subtitle.language,
-		type: 'text/vtt',
+		type: TextTrackType.VTT,
 		uri: subtitle.url,
 	}));
 }
