@@ -38,6 +38,7 @@
     "react-native-uuid": "^2.0.1"
   },
   "devDependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.6",
     "@react-native-community/bob": "^0.17.1",
     "@types/react-native": "^0.67.7",
     "@types/react-native-video": "^5.0.13",
