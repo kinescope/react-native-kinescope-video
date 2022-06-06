@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {MetricClass} from './metric-class';
-import {MetricQueueFlush} from './metric-queue-flush';
+import {MetricMediaTypes, MetricQueueFlush} from './metric-queue-flush';
 import {MetricQueue} from './metric-queue';
 
 type CreateMetricTypes = {
@@ -9,13 +9,13 @@ type CreateMetricTypes = {
 	muted: boolean;
 	rate: number;
 
-	videoId?: string;
+	media?: MetricMediaTypes;
 	externalId?: string;
 };
 
-function createMetric({videoId, externalId, paused, volume, muted, rate}: CreateMetricTypes) {
+function createMetric({media, externalId, paused, volume, muted, rate}: CreateMetricTypes) {
 	const queue = new MetricQueue();
-	const queueFlush = new MetricQueueFlush({queue: queue, videoId, externalId});
+	const queueFlush = new MetricQueueFlush({queue: queue, media, externalId});
 	const metric = new MetricClass(queue, {paused, volume, muted, rate});
 
 	return {
@@ -25,7 +25,7 @@ function createMetric({videoId, externalId, paused, volume, muted, rate}: Create
 }
 
 export default function useMetric({
-	videoId,
+	media,
 	externalId,
 	paused,
 	volume,
@@ -33,22 +33,22 @@ export default function useMetric({
 	rate,
 }: CreateMetricTypes) {
 	const [{metric, queueFlush}] = useState<{metric: MetricClass; queueFlush: MetricQueueFlush}>(
-		createMetric({videoId, externalId, paused, volume, muted, rate}),
+		createMetric({media, externalId, paused, volume, muted, rate}),
 	);
 
 	useEffect(() => {
-		if (videoId) {
+		if (media?.videoId) {
 			queueFlush.start();
 		}
 
 		return () => {
 			queueFlush.stop();
 		};
-	}, [videoId]);
+	}, [media?.videoId]);
 
 	useEffect(() => {
-		queueFlush && queueFlush.setVideoId(videoId);
-	}, [videoId]);
+		queueFlush && queueFlush.setMedia(media);
+	}, [media?.videoId]);
 
 	useEffect(() => {
 		queueFlush && queueFlush.setExternalId(externalId);
@@ -82,5 +82,6 @@ export default function useMetric({
 		onMetricEnd: metric.onEnd,
 		onMetricEnterFullScreen: metric.onEnterFullScreen,
 		onMetricExitFullScreen: metric.onExitFullScreen,
+		onMetricError: metric.onError,
 	};
 }

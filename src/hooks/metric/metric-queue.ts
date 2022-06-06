@@ -1,11 +1,14 @@
-import {Batch, Event, TechSpecs} from './protobuf/metrics';
+import {Batch, Event, Error, TechSpecs} from './protobuf/metrics';
 import techSpecs from './tech-specs';
 import {videoVersion} from './contants';
 import {fetch} from 'react-native-fetch-api';
 
 export type EventLogPlaybackEvent = Event;
+export type EventLogErrorEvent = Error;
 
-export type EventLogEntry = {readonly type: 'playback'; readonly data: EventLogPlaybackEvent};
+export type EventLogEntry =
+	| {readonly type: 'playback'; readonly data: EventLogPlaybackEvent}
+	| {readonly type: 'error'; readonly data: EventLogErrorEvent};
 
 export interface EventLogFlushOptions
 	extends Pick<Batch, 'session' | 'media'>,
@@ -30,6 +33,8 @@ export class MetricQueue {
 		this.queue.forEach(entry => {
 			if (entry.type === 'playback') {
 				events.push(entry.data);
+			} else if (entry.type === 'error') {
+				errors.push(entry.data);
 			}
 		});
 
@@ -44,8 +49,8 @@ export class MetricQueue {
 		});
 		const batchData = Batch.toBinary(batchMessage);
 
-		fetch(url, {body: batchData, method: 'POST', keepalive: true}).then(data => {
-			console.log('fetch', data);
+		fetch(url, {body: batchData, method: 'POST', keepalive: true}).then(() => {
+			console.log('MetricQueue fetch');
 		});
 
 		this.queue.clear();

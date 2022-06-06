@@ -1,4 +1,4 @@
-import {OnLoadData, OnProgressData, OnSeekData} from 'react-native-video';
+import {LoadError, OnLoadData, OnProgressData, OnSeekData} from 'react-native-video';
 import {getTimestamp} from './functions/getTimestamp';
 import {MetricQueue} from './metric-queue';
 import {SecondsCounter} from './seconds-counter';
@@ -107,9 +107,6 @@ export class MetricClass {
 
 	addToQueue = async (eventName: EventName, value = 0): Promise<void> => {
 		const timestamp = getTimestamp();
-
-		console.log('addToQueue', eventName, value);
-
 		this.queue.add({
 			type: 'playback',
 			data: {
@@ -133,6 +130,18 @@ export class MetricClass {
 		if (eventName === 'playback') {
 			this.prevTime = this.currentTime;
 		}
+	};
+
+	addErrorToQueue = async (error: LoadError): Promise<void> => {
+		const timestamp = getTimestamp();
+		this.queue.add({
+			type: 'error',
+			data: {
+				type: 'error',
+				message: JSON.stringify({...error}),
+				timestamp: timestamp,
+			},
+		});
 	};
 
 	startPlaybackTimer = (): void => {
@@ -195,6 +204,7 @@ export class MetricClass {
 	};
 
 	onProgress = (data: OnProgressData) => {
+		this.currentTime = data.currentTime;
 		this.secondsPlayed.push(data.currentTime);
 	};
 
@@ -211,5 +221,9 @@ export class MetricClass {
 	onExitFullScreen = () => {
 		this.isFullscreen = false;
 		void this.addToQueue('exitfullscreen');
+	};
+
+	onError = (error: LoadError) => {
+		void this.addErrorToQueue(error);
 	};
 }

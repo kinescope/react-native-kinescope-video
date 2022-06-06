@@ -45,6 +45,7 @@ function ReactNativeKinescopeVideo(
 		onEnd,
 		onFullscreenPlayerDidPresent,
 		onFullscreenPlayerWillPresent,
+		onError,
 		onManifestLoadStart,
 		onManifestLoad,
 		onManifestError,
@@ -60,6 +61,13 @@ function ReactNativeKinescopeVideo(
 		onManifestError,
 	});
 
+	const media = {
+		videoId: manifest?.id,
+		workspaceId: manifest?.workspaceId,
+		projectId: manifest?.projectId,
+		folderId: manifest?.folderId,
+	};
+
 	const {
 		onMetricLoadStart,
 		onMetricLoad,
@@ -68,7 +76,8 @@ function ReactNativeKinescopeVideo(
 		onMetricEnd,
 		onMetricEnterFullScreen,
 		onMetricExitFullScreen,
-	} = useMetric({videoId: manifest?.id, externalId, paused, muted, volume, rate});
+		onMetricError,
+	} = useMetric({media: media, externalId, paused, muted, volume, rate});
 
 	useEffect(() => {
 		setLoadingVideo(false);
@@ -122,6 +131,14 @@ function ReactNativeKinescopeVideo(
 		onMetricExitFullScreen();
 	}, [onFullscreenPlayerWillPresent]);
 
+	const handleError = useCallback(
+		error => {
+			onError && onError(error);
+			onMetricError(error);
+		},
+		[onError],
+	);
+
 	if (loading || !manifest) {
 		return <View style={style} />;
 	}
@@ -141,7 +158,7 @@ function ReactNativeKinescopeVideo(
 	}
 
 	const getTextTracks = () => {
-		if(Platform.OS === 'android') {
+		if (Platform.OS === 'android') {
 			return textTracks ?? manifest.subtitles;
 		}
 		if (!loadingVideo) {
@@ -178,6 +195,7 @@ function ReactNativeKinescopeVideo(
 			onEnd={handleEnd}
 			onFullscreenPlayerDidPresent={handleFullscreenPlayerDidPresent}
 			onFullscreenPlayerWillPresent={handleFullscreenPlayerWillPresent}
+			onError={handleError}
 		/>
 	);
 }

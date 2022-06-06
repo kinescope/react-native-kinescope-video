@@ -12,6 +12,9 @@ export type ChapterTypes = {
 
 export type ManifestTypes = {
 	id: string;
+	workspaceId: string;
+	projectId: string;
+	folderId: string;
 	title: string;
 	posterUrl: string;
 	chapters: ChapterTypes[];

@@ -1,11 +1,18 @@
 import uuid from 'react-native-uuid';
 import {getTimestamp} from './functions/getTimestamp';
 import {EventLogFlushOptions, MetricQueue} from './metric-queue';
-import {metricOptions} from './contants';
+import {METRIC_OPTIONS} from './contants';
 import {getClientId} from './functions/getClientId';
 
-type MetricQueueFlushTypes = {
+export type MetricMediaTypes = {
 	videoId?: string;
+	workspaceId?: string;
+	projectId?: string;
+	folderId?: string;
+};
+
+type MetricQueueFlushTypes = {
+	media?: MetricMediaTypes;
 	queue: MetricQueue;
 	externalId?: string;
 };
@@ -17,11 +24,11 @@ export class MetricQueueFlush {
 	watchingId = uuid.v4().toString();
 	queue: MetricQueue;
 
-	videoId: string | undefined;
+	media: MetricMediaTypes | undefined;
 	externalId?: string;
 
-	constructor({queue, videoId, externalId}: MetricQueueFlushTypes) {
-		this.videoId = videoId;
+	constructor({queue, media, externalId}: MetricQueueFlushTypes) {
+		this.media = media;
 		this.externalId = externalId;
 		this.queue = queue;
 	}
@@ -31,12 +38,12 @@ export class MetricQueueFlush {
 		await this.flash();
 	};
 
-	setVideoId = async (videoId?: string) => {
-		if (this.videoId !== videoId) {
+	setMedia = async (media?: MetricMediaTypes) => {
+		if (this.media?.videoId !== media?.videoId) {
 			await this.flash();
 			this.watchingId = uuid.v4().toString();
 		}
-		this.videoId = videoId;
+		this.media = media;
 	};
 
 	setExternalId = (externalId?: string) => {
@@ -68,21 +75,22 @@ export class MetricQueueFlush {
 
 	getMedia = (): EventLogFlushOptions['media'] => {
 		return {
-			type: '',
-			videoID: this.videoId || '',
-			folderID: '',
-			projectID: '',
-			workspaceID: '',
+			type: 'vod',
+			videoID: this.media?.videoId || '',
+			folderID: this.media?.folderId || '',
+			projectID: this.media?.projectId || '',
+			workspaceID: this.media?.workspaceId || '',
 		};
 	};
 
 	start = () => {
 		this.timerInterval = setInterval(() => {
 			this.flash();
-		}, metricOptions.interval);
+		}, METRIC_OPTIONS.interval);
 	};
 
 	stop = () => {
+		this.flash();
 		clearInterval(this.timerInterval);
 	};
 
@@ -90,7 +98,7 @@ export class MetricQueueFlush {
 		const session = await this.getSession();
 
 		this.queue.flush({
-			url: metricOptions.url,
+			url: METRIC_OPTIONS.url,
 			timestamp: this.getTimestamp(),
 			session: session,
 			media: this.getMedia(),

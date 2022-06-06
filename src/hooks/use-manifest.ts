@@ -7,6 +7,7 @@ import {
 	ChapterTypes,
 	SubtitleTypes,
 } from '../types';
+import {METRIC_HOST} from './metric/contants';
 export type {ManifestEventsTypes};
 
 type UseManifestTypes = ManifestEventsTypes & {
@@ -40,6 +41,9 @@ function transformManifest(json: any): ManifestTypes {
 	const chapters: ChapterTypes[] = transformChapters(json?.chapters?.items);
 	return {
 		id: json.id,
+		workspaceId: json.workspace_id,
+		projectId: json.project_id,
+		folderId: json.folder_id,
 		title: json.title,
 		posterUrl: json.poster?.url,
 		subtitles: subtitles,
@@ -74,7 +78,7 @@ export default function useManifest({
 			setLoading(true);
 			setManifest(null);
 
-			const response = await fetch(`https://kinescope.io/${videoId}.json`);
+			const response = await fetch(`https://${METRIC_HOST}/${videoId}.json`);
 			const json = await response.json();
 			const manifest: ManifestTypes = transformManifest(json);
 
