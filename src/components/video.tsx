@@ -168,10 +168,10 @@ function ReactNativeKinescopeVideo(
 	};
 
 	const getSource = () => {
-		if (Platform.OS === 'ios') {
-			return {uri: manifest.hlsLink, type: 'm3u8'};
+		if (Platform.OS === 'android' && manifest.dashLink) {
+			return {uri: manifest.dashLink, type: 'mpd'};
 		}
-		return {uri: manifest.dashLink, type: 'mpd'};
+		return {uri: manifest.hlsLink, type: 'm3u8'};
 	};
 
 	return (
