@@ -7,5 +7,19 @@ polyfillEncoding();
 import ReactNativeKinescopeVideo from './components/video';
 export default ReactNativeKinescopeVideo;
 
-import {ManifestEventsTypes, ManifestEventLoadTypes, ChapterTypes, SubtitleTypes} from './types';
-export type {ManifestEventsTypes, ManifestEventLoadTypes, ChapterTypes, SubtitleTypes};
+import {
+	ManifestEventsTypes,
+	ManifestEventLoadTypes,
+	ChapterTypes,
+	SubtitleTypes,
+	QualityTypes,
+	QualityNameTypes,
+} from './types';
+export type {
+	ManifestEventsTypes,
+	ManifestEventLoadTypes,
+	ChapterTypes,
+	SubtitleTypes,
+	QualityTypes,
+	QualityNameTypes,
+};

@@ -8,8 +8,9 @@ import ReactVideo, {
 } from 'react-native-video';
 import useManifest, {ManifestEventsTypes} from '../hooks/use-manifest';
 import useMetric from '../hooks/metric/use-metric';
+import {QualityTypes} from '../types';
 
-type ReactVideoProps = Omit<VideoProperties, 'source' | 'poster'>;
+type ReactVideoProps = Omit<VideoProperties, 'source' | 'poster' | 'selectedVideoTrack'>;
 
 type ReactNativeKinescopeVideoProps = ReactVideoProps &
 	ManifestEventsTypes & {
@@ -17,6 +18,7 @@ type ReactNativeKinescopeVideoProps = ReactVideoProps &
 		videoId: string;
 		posterResizeMode?: ImageResizeMode;
 		externalId?: string;
+		quality?: QualityTypes;
 	};
 
 function ReactNativeKinescopeVideo(
@@ -28,6 +30,7 @@ function ReactNativeKinescopeVideo(
 		videoId,
 		posterResizeMode = 'contain',
 		externalId,
+		quality = 'auto',
 
 		selectedTextTrack,
 		textTracks,
@@ -139,6 +142,19 @@ function ReactNativeKinescopeVideo(
 		[onError],
 	);
 
+	const getSelectedVideoTrack = useCallback((): VideoProperties['selectedVideoTrack'] => {
+		const resolution = manifest?.qualityMap[quality]?.height;
+		if (resolution) {
+			return {
+				type: 'resolution',
+				value: resolution,
+			};
+		}
+		return {
+			type: 'auto',
+		};
+	}, [quality]);
+
 	if (loading || !manifest) {
 		return <View style={style} />;
 	}
@@ -167,11 +183,15 @@ function ReactNativeKinescopeVideo(
 		return textTracks ?? manifest.subtitles;
 	};
 
+	const getHlsLink = () => {
+		return manifest.qualityMap[quality]?.uri || manifest.hlsLink;
+	};
+
 	const getSource = () => {
 		if (Platform.OS === 'android' && manifest.dashLink) {
 			return {uri: manifest.dashLink, type: 'mpd'};
 		}
-		return {uri: manifest.hlsLink, type: 'm3u8'};
+		return {uri: getHlsLink(), type: 'm3u8'};
 	};
 
 	return (
@@ -181,6 +201,7 @@ function ReactNativeKinescopeVideo(
 			source={getSource()}
 			poster={manifest.posterUrl}
 			selectedTextTrack={selectedTextTrack}
+			selectedVideoTrack={getSelectedVideoTrack()}
 			textTracks={getTextTracks()}
 			posterResizeMode={posterResizeMode}
 			style={style}

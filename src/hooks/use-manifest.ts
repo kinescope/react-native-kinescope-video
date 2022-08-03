@@ -3,9 +3,11 @@ import {TextTrackType} from 'react-native-video';
 import {
 	ManifestEventsTypes,
 	ManifestEventLoadTypes,
+	ManifestQualityMapTypes,
 	ManifestTypes,
 	ChapterTypes,
 	SubtitleTypes,
+	QualityMapTypes,
 } from '../types';
 import {METRIC_HOST} from './metric/contants';
 export type {ManifestEventsTypes};
@@ -36,9 +38,24 @@ function transformChapters(chapters: any[]): ChapterTypes[] {
 	}));
 }
 
+function transformQualityMap(quality: ManifestQualityMapTypes, hlsLink: string) {
+	const char = hlsLink.indexOf('?') === -1 ? '?' : '&';
+	let result: QualityMapTypes = {};
+	quality.forEach(item => {
+		result[item.name] = {
+			label: item.label,
+			name: item.name,
+			height: item.height,
+			uri: [hlsLink, 'quality=' + item.name].join(char),
+		};
+	});
+	return result;
+}
+
 function transformManifest(json: any): ManifestTypes {
 	const subtitles: SubtitleTypes[] = transformSubtitles(json?.subtitles);
 	const chapters: ChapterTypes[] = transformChapters(json?.chapters?.items);
+	const qualityMap = transformQualityMap(json?.quality_map, json?.hls_link);
 	return {
 		id: json.id,
 		workspaceId: json.workspace_id,
@@ -50,6 +67,7 @@ function transformManifest(json: any): ManifestTypes {
 		chapters: chapters,
 		hlsLink: json?.hls_link,
 		dashLink: json?.dash_link,
+		qualityMap: qualityMap,
 	};
 }
 
@@ -61,6 +79,10 @@ function publicManifest(manifest: ManifestTypes): ManifestEventLoadTypes {
 			language: subtitle.language,
 		})),
 		chapters: manifest.chapters,
+		quality: Object.values(manifest.qualityMap).map(item => ({
+			label: item.label,
+			name: item.name,
+		})),
 	};
 }
 

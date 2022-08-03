@@ -67,9 +67,11 @@ npx pod-install
 ## Props including [react-native-video](https://github.com/react-native-video/react-native-video/blob/master/API.md#configurable-props)
 ```
 // Props
-videoId: string;
 preload?: boolean;
+videoId: string;
+posterResizeMode?: ImageResizeMode;
 externalId?: string;
+quality?: QualityTypes;
 
 // Events
 onManifestLoadStart?: () => void;
