@@ -72,6 +72,7 @@ videoId: string;
 posterResizeMode?: ImageResizeMode;
 externalId?: string;
 quality?: QualityTypes;
+autoSeekChangeQuality?: boolean; // default: true; iOS only
 
 // Events
 onManifestLoadStart?: () => void;

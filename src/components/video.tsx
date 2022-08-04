@@ -1,4 +1,4 @@
-import React, {ForwardedRef, forwardRef, useCallback, useEffect, useState} from 'react';
+import React, {ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState} from 'react';
 import {Image, ImageResizeMode, Platform, View} from 'react-native';
 import ReactVideo, {
 	OnLoadData,
@@ -19,6 +19,7 @@ type ReactNativeKinescopeVideoProps = ReactVideoProps &
 		posterResizeMode?: ImageResizeMode;
 		externalId?: string;
 		quality?: QualityTypes;
+		autoSeekChangeQuality?: boolean; // ios only
 	};
 
 function ReactNativeKinescopeVideo(
@@ -31,6 +32,7 @@ function ReactNativeKinescopeVideo(
 		posterResizeMode = 'contain',
 		externalId,
 		quality = 'auto',
+		autoSeekChangeQuality = true,
 
 		selectedTextTrack,
 		textTracks,
@@ -54,6 +56,9 @@ function ReactNativeKinescopeVideo(
 		onManifestError,
 		...rest
 	} = props;
+
+	const videoRef = useRef<ReactVideo>();
+	const seekQuality = useRef<number>(0);
 
 	const [loadingVideo, setLoadingVideo] = useState<boolean>(false);
 	const [videoStartLoad, setVideoStartLoad] = useState(false);
@@ -83,9 +88,34 @@ function ReactNativeKinescopeVideo(
 	} = useMetric({media: media, externalId, paused, muted, volume, rate});
 
 	useEffect(() => {
+		seekQuality.current = 0;
 		setLoadingVideo(false);
 		setVideoStartLoad(false);
 	}, [videoId]);
+
+	const handleRef = useCallback(
+		current => {
+			videoRef.current = current;
+			if (ref) {
+				if (typeof ref === 'function') {
+					ref && ref(current);
+				} else {
+					ref.current = current;
+				}
+			}
+		},
+		[ref],
+	);
+
+	const applySeek = useCallback(() => {
+		if (!autoSeekChangeQuality || Platform.OS !== 'ios') {
+			return;
+		}
+		if (seekQuality.current > 0) {
+			videoRef.current?.seek(seekQuality.current);
+			seekQuality.current = 0;
+		}
+	}, [autoSeekChangeQuality]);
 
 	const handleLoadStart = useCallback(() => {
 		onLoadStart && onLoadStart();
@@ -99,8 +129,9 @@ function ReactNativeKinescopeVideo(
 			onLoad && onLoad(data);
 			onMetricLoad(data);
 			setLoadingVideo(true);
+			applySeek();
 		},
-		[onLoad],
+		[onLoad, applySeek],
 	);
 
 	const handleSeek = useCallback(
@@ -113,6 +144,7 @@ function ReactNativeKinescopeVideo(
 
 	const handleProgress = useCallback(
 		(data: OnProgressData) => {
+			seekQuality.current = data.currentTime;
 			onProgress && onProgress(data);
 			onMetricProgress(data);
 		},
@@ -196,7 +228,7 @@ function ReactNativeKinescopeVideo(
 
 	return (
 		<ReactVideo
-			ref={ref}
+			ref={handleRef}
 			{...rest}
 			source={getSource()}
 			poster={manifest.posterUrl}
