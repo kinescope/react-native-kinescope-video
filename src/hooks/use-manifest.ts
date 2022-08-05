@@ -71,7 +71,13 @@ function transformManifest(json: any): ManifestTypes {
 	};
 }
 
+function qualitySort(a, b) {
+	return b.height - a.height;
+}
+
 function publicManifest(manifest: ManifestTypes): ManifestEventLoadTypes {
+	const quality = Object.values(manifest.qualityMap);
+	quality.sort(qualitySort);
 	return {
 		title: manifest.title,
 		subtitles: manifest.subtitles.map(subtitle => ({
@@ -79,7 +85,7 @@ function publicManifest(manifest: ManifestTypes): ManifestEventLoadTypes {
 			language: subtitle.language,
 		})),
 		chapters: manifest.chapters,
-		quality: Object.values(manifest.qualityMap).map(item => ({
+		quality: quality.map(item => ({
 			label: item.label,
 			name: item.name,
 		})),
