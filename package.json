@@ -1,6 +1,6 @@
 {
   "name": "@kinescope/react-native-kinescope-video",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A <ReactNativeKinescopeVideo /> element for react-native",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
@@ -64,5 +64,11 @@
       "module",
       "typescript"
     ]
+  },
+  "standard-version": {
+    "skip": {
+      "tag": true,
+      "commit": true
+    }
   }
 }

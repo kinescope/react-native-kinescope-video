@@ -1,5 +1,12 @@
 # Changelog
 
+
+### [1.1.1](https://github.com/kinescope/react-native-kinescope-video/compare/v1.1.0...v1.1.1) (2022-08-10)
+
+### Bug Fixes
+
+* quality getSelectedVideoTrack ([b9d328c](https://github.com/kinescope/react-native-kinescope-video/commit/b9d328cd35bdde3f4e1764c9026fb88ef206ff42))
+
 ## [1.1.0](https://github.com/kinescope/react-native-kinescope-video/compare/v1.0.1...v1.1.0) (2022-08-05)
 
 ### Features
