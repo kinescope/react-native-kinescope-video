@@ -185,7 +185,7 @@ function ReactNativeKinescopeVideo(
 		return {
 			type: 'auto',
 		};
-	}, [quality]);
+	}, [quality, manifest]);
 
 	if (loading || !manifest) {
 		return <View style={style} />;
