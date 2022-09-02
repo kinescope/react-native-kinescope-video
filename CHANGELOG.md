@@ -1,5 +1,10 @@
 # Changelog
 
+### [1.1.2](https://github.com/kinescope/react-native-kinescope-video/compare/v1.1.1...v1.1.2) (2022-09-02)
+
+### Bug Fixes
+
+* MediaTypeTypes ([65e0a92](https://github.com/kinescope/react-native-kinescope-video/commit/65e0a92eb6ca71098093eacbf5172938a1d6b9b0))
 
 ### [1.1.1](https://github.com/kinescope/react-native-kinescope-video/compare/v1.1.0...v1.1.1) (2022-08-10)
 
