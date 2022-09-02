@@ -29,8 +29,11 @@ export type ManifestQualityMapTypes = {
 	height: number;
 }[];
 
+export type MediaTypeTypes = 'vod' | 'live';
+
 export type ManifestTypes = {
 	id: string;
+	type: MediaTypeTypes;
 	workspaceId: string;
 	projectId: string;
 	folderId: string;

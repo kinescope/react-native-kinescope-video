@@ -1,10 +1,12 @@
 import uuid from 'react-native-uuid';
+import {MediaTypeTypes} from '../../types';
 import {getTimestamp} from './functions/getTimestamp';
 import {EventLogFlushOptions, MetricQueue} from './metric-queue';
 import {METRIC_OPTIONS} from './contants';
 import {getClientId} from './functions/getClientId';
 
 export type MetricMediaTypes = {
+	type?: MediaTypeTypes;
 	videoId?: string;
 	workspaceId?: string;
 	projectId?: string;
@@ -75,7 +77,7 @@ export class MetricQueueFlush {
 
 	getMedia = (): EventLogFlushOptions['media'] => {
 		return {
-			type: 'vod',
+			type: this.media?.type || '',
 			videoID: this.media?.videoId || '',
 			folderID: this.media?.folderId || '',
 			projectID: this.media?.projectId || '',

@@ -8,6 +8,7 @@ import ReactVideo, {
 } from 'react-native-video';
 import useManifest, {ManifestEventsTypes} from '../hooks/use-manifest';
 import useMetric from '../hooks/metric/use-metric';
+import {MetricMediaTypes} from '../hooks/metric/metric-queue-flush';
 import {QualityTypes} from '../types';
 
 type ReactVideoProps = Omit<VideoProperties, 'source' | 'poster' | 'selectedVideoTrack'>;
@@ -69,7 +70,8 @@ function ReactNativeKinescopeVideo(
 		onManifestError,
 	});
 
-	const media = {
+	const media: MetricMediaTypes = {
+		type: manifest?.type,
 		videoId: manifest?.id,
 		workspaceId: manifest?.workspaceId,
 		projectId: manifest?.projectId,

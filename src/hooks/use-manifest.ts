@@ -58,6 +58,7 @@ function transformManifest(json: any): ManifestTypes {
 	const qualityMap = transformQualityMap(json?.quality_map, json?.hls_link);
 	return {
 		id: json.id,
+		type: json.type,
 		workspaceId: json.workspace_id,
 		projectId: json.project_id,
 		folderId: json.folder_id,
