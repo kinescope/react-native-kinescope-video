@@ -1,4 +1,12 @@
-import React, {ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+	ForwardedRef,
+	forwardRef,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
 import {Image, ImageResizeMode, Platform, View} from 'react-native';
 import ReactVideo, {
 	OnLoadData,
@@ -10,6 +18,7 @@ import useManifest, {ManifestEventsTypes} from '../hooks/use-manifest';
 import useMetric from '../hooks/metric/use-metric';
 import {MetricMediaTypes} from '../hooks/metric/metric-queue-flush';
 import {QualityTypes} from '../types';
+import {METRIC_HOST} from '../hooks/metric/contants';
 
 type ReactVideoProps = Omit<VideoProperties, 'source' | 'poster' | 'selectedVideoTrack'>;
 
@@ -21,6 +30,7 @@ type ReactNativeKinescopeVideoProps = ReactVideoProps &
 		externalId?: string;
 		quality?: QualityTypes;
 		autoSeekChangeQuality?: boolean; // ios only
+		referer?: string;
 	};
 
 function ReactNativeKinescopeVideo(
@@ -34,6 +44,7 @@ function ReactNativeKinescopeVideo(
 		externalId,
 		quality = 'auto',
 		autoSeekChangeQuality = true,
+		referer = `https://${METRIC_HOST}`,
 
 		selectedTextTrack,
 		textTracks,
@@ -65,6 +76,7 @@ function ReactNativeKinescopeVideo(
 	const [videoStartLoad, setVideoStartLoad] = useState(false);
 	const {loading, manifest} = useManifest({
 		videoId,
+		referer,
 		onManifestLoadStart,
 		onManifestLoad,
 		onManifestError,
@@ -88,6 +100,12 @@ function ReactNativeKinescopeVideo(
 		onMetricExitFullScreen,
 		onMetricError,
 	} = useMetric({media: media, externalId, paused, muted, volume, rate});
+
+	const headers = useMemo(() => {
+		return {
+			Referer: referer,
+		};
+	}, [referer]);
 
 	useEffect(() => {
 		seekQuality.current = 0;
@@ -199,6 +217,7 @@ function ReactNativeKinescopeVideo(
 				<Image
 					source={{
 						uri: manifest.posterUrl,
+						headers: headers,
 					}}
 					resizeMode={posterResizeMode}
 					style={{flex: 1}}
@@ -223,9 +242,17 @@ function ReactNativeKinescopeVideo(
 
 	const getSource = () => {
 		if (Platform.OS === 'android' && manifest.dashLink) {
-			return {uri: manifest.dashLink, type: 'mpd'};
+			return {
+				uri: manifest.dashLink,
+				type: 'mpd',
+				headers: headers,
+			};
 		}
-		return {uri: getHlsLink(), type: 'm3u8'};
+		return {
+			uri: getHlsLink(),
+			type: 'm3u8',
+			headers: headers,
+		};
 	};
 
 	return (

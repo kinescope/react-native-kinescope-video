@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {TextTrackType} from 'react-native-video';
 import {
 	ManifestEventsTypes,
@@ -14,6 +14,7 @@ export type {ManifestEventsTypes};
 
 type UseManifestTypes = ManifestEventsTypes & {
 	videoId: string;
+	referer: string;
 };
 
 function transformSubtitles(subtitles: any[]): SubtitleTypes[] {
@@ -95,6 +96,7 @@ function publicManifest(manifest: ManifestTypes): ManifestEventLoadTypes {
 
 export default function useManifest({
 	videoId,
+	referer,
 	onManifestLoadStart,
 	onManifestLoad,
 	onManifestError,
@@ -102,12 +104,20 @@ export default function useManifest({
 	const [loading, setLoading] = useState(true);
 	const [manifest, setManifest] = useState<ManifestTypes | null>(null);
 
+	const headers = useMemo(() => {
+		return {
+			Referer: referer,
+		};
+	}, [referer]);
+
 	const getManifest = async () => {
 		try {
 			setLoading(true);
 			setManifest(null);
 
-			const response = await fetch(`https://${METRIC_HOST}/${videoId}.json`);
+			const response = await fetch(`https://${METRIC_HOST}/${videoId}.json`, {
+				headers: headers,
+			});
 			const json = await response.json();
 			const manifest: ManifestTypes = transformManifest(json);
 
@@ -124,7 +134,7 @@ export default function useManifest({
 		setManifest(null);
 		onManifestLoadStart && onManifestLoadStart();
 		getManifest();
-	}, [videoId]);
+	}, [videoId, headers]);
 
 	return {
 		loading: loading,

@@ -73,6 +73,7 @@ posterResizeMode?: ImageResizeMode;
 externalId?: string;
 quality?: QualityTypes;
 autoSeekChangeQuality?: boolean; // default: true; iOS only
+referer?: string;
 
 // Events
 onManifestLoadStart?: () => void;
