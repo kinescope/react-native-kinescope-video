@@ -1,4 +1,4 @@
-import {LoadError, OnLoadData, OnProgressData, OnSeekData} from 'react-native-video';
+import {OnVideoErrorData, OnLoadData, OnProgressData, OnSeekData} from 'react-native-video';
 import {getTimestamp} from './functions/getTimestamp';
 import {MetricQueue} from './metric-queue';
 import {SecondsCounter} from './seconds-counter';
@@ -132,7 +132,7 @@ export class MetricClass {
 		}
 	};
 
-	addErrorToQueue = async (error: LoadError): Promise<void> => {
+	addErrorToQueue = async (error: OnVideoErrorData): Promise<void> => {
 		const timestamp = getTimestamp();
 		this.queue.add({
 			type: 'error',
@@ -223,7 +223,7 @@ export class MetricClass {
 		void this.addToQueue('exitfullscreen');
 	};
 
-	onError = (error: LoadError) => {
+	onError = (error: OnVideoErrorData) => {
 		void this.addErrorToQueue(error);
 	};
 }

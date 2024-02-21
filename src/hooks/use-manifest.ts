@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import {TextTrackType} from 'react-native-video';
+import {Drm, DRMType, TextTrackType} from 'react-native-video';
 import {
 	ManifestEventsTypes,
 	ManifestEventLoadTypes,
@@ -15,6 +15,7 @@ export type {ManifestEventsTypes};
 type UseManifestTypes = ManifestEventsTypes & {
 	videoId: string;
 	referer: string;
+	drmAuthToken: string;
 };
 
 function transformSubtitles(subtitles: any[]): SubtitleTypes[] {
@@ -57,6 +58,25 @@ function transformManifest(json: any): ManifestTypes {
 	const subtitles: SubtitleTypes[] = transformSubtitles(json?.subtitles);
 	const chapters: ChapterTypes[] = transformChapters(json?.chapters?.items);
 	const qualityMap = transformQualityMap(json?.quality_map, json?.hls_link);
+
+	const fairplay = json?.drm?.fairplay;
+	const widevine = json?.drm?.widevine;
+
+	const hlsDrm: Drm | undefined = fairplay
+		? {
+				type: DRMType.FAIRPLAY,
+				licenseServer: fairplay?.licenseUrl,
+				certificateUrl: fairplay?.certificateUrl,
+		  }
+		: undefined;
+
+	const dashDrm: Drm | undefined = widevine
+		? {
+				type: DRMType.WIDEVINE,
+				licenseServer: widevine?.licenseUrl,
+		  }
+		: undefined;
+
 	return {
 		id: json.id,
 		type: json.type,
@@ -69,6 +89,8 @@ function transformManifest(json: any): ManifestTypes {
 		chapters: chapters,
 		hlsLink: json?.hls_link,
 		dashLink: json?.dash_link,
+		hlsDrm: hlsDrm,
+		dashDrm: dashDrm,
 		qualityMap: qualityMap,
 	};
 }
@@ -97,6 +119,7 @@ function publicManifest(manifest: ManifestTypes): ManifestEventLoadTypes {
 export default function useManifest({
 	videoId,
 	referer,
+	drmAuthToken,
 	onManifestLoadStart,
 	onManifestLoad,
 	onManifestError,
@@ -115,9 +138,12 @@ export default function useManifest({
 			setLoading(true);
 			setManifest(null);
 
-			const response = await fetch(`https://${METRIC_HOST}/${videoId}.json`, {
-				headers: headers,
-			});
+			const response = await fetch(
+				`https://${METRIC_HOST}/${videoId}.json?drmauthtoken=${drmAuthToken}`,
+				{
+					headers: headers,
+				},
+			);
 			const json = await response.json();
 			const manifest: ManifestTypes = transformManifest(json);
 

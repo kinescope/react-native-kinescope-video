@@ -5,4 +5,4 @@ export const METRIC_OPTIONS = {
 	interval: 60000,
 };
 
-export const videoVersion = '1.0.0';
+export const videoVersion = '1.0.1';

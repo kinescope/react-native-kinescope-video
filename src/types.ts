@@ -1,3 +1,5 @@
+import {Drm, TextTrackType} from 'react-native-video';
+
 type QualityResolutionTypes = 144 | 240 | 360 | 480 | 576 | 720 | 1080 | 1440 | 2160 | 4320;
 export type QualityNameTypes = `${QualityResolutionTypes}p${any}`;
 export type QualityTypes = 'auto' | QualityNameTypes;
@@ -14,7 +16,7 @@ export type QualityMapTypes = {
 export type SubtitleTypes = {
 	title: string;
 	language: string;
-	type: 'text/vtt';
+	type: TextTrackType;
 	uri: string;
 };
 
@@ -43,6 +45,8 @@ export type ManifestTypes = {
 	subtitles: SubtitleTypes[];
 	hlsLink: string;
 	dashLink: string;
+	dashDrm: Drm | undefined;
+	hlsDrm: Drm | undefined;
 	qualityMap: QualityMapTypes;
 };
 

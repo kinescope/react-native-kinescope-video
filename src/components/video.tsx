@@ -9,10 +9,17 @@ import React, {
 } from 'react';
 import {Image, ImageResizeMode, Platform, View} from 'react-native';
 import ReactVideo, {
+	Drm,
 	OnLoadData,
 	OnProgressData,
 	OnSeekData,
-	VideoProperties,
+	PosterResizeModeType,
+	ReactVideoProps,
+	ReactVideoSource,
+	SelectedVideoTrack,
+	SelectedVideoTrackType,
+	TextTracks,
+	VideoRef,
 } from 'react-native-video';
 import useManifest, {ManifestEventsTypes} from '../hooks/use-manifest';
 import useMetric from '../hooks/metric/use-metric';
@@ -20,9 +27,12 @@ import {MetricMediaTypes} from '../hooks/metric/metric-queue-flush';
 import {QualityTypes} from '../types';
 import {METRIC_HOST} from '../hooks/metric/contants';
 
-type ReactVideoProps = Omit<VideoProperties, 'source' | 'poster' | 'selectedVideoTrack'>;
+type ReactVideoPropsOmit = Omit<
+	ReactVideoProps,
+	'source' | 'poster' | 'posterResizeMode' | 'selectedVideoTrack'
+>;
 
-type ReactNativeKinescopeVideoProps = ReactVideoProps &
+export type ReactNativeKinescopeVideoProps = ReactVideoPropsOmit &
 	ManifestEventsTypes & {
 		preload?: boolean;
 		videoId: string;
@@ -31,20 +41,22 @@ type ReactNativeKinescopeVideoProps = ReactVideoProps &
 		quality?: QualityTypes;
 		autoSeekChangeQuality?: boolean; // ios only
 		referer?: string;
+		drmAuthToken?: string;
 	};
 
 function ReactNativeKinescopeVideo(
 	props: ReactNativeKinescopeVideoProps,
-	ref: ForwardedRef<ReactVideo>,
+	ref: ForwardedRef<VideoRef>,
 ) {
 	const {
 		preload,
 		videoId,
-		posterResizeMode = 'contain',
+		posterResizeMode,
 		externalId,
 		quality = 'auto',
 		autoSeekChangeQuality = true,
 		referer = `https://${METRIC_HOST}`,
+		drmAuthToken = '',
 
 		selectedTextTrack,
 		textTracks,
@@ -69,7 +81,7 @@ function ReactNativeKinescopeVideo(
 		...rest
 	} = props;
 
-	const videoRef = useRef<ReactVideo>();
+	const videoRef = useRef<VideoRef>();
 	const seekQuality = useRef<number>(0);
 
 	const [loadingVideo, setLoadingVideo] = useState<boolean>(false);
@@ -77,6 +89,7 @@ function ReactNativeKinescopeVideo(
 	const {loading, manifest} = useManifest({
 		videoId,
 		referer,
+		drmAuthToken,
 		onManifestLoadStart,
 		onManifestLoad,
 		onManifestError,
@@ -137,12 +150,15 @@ function ReactNativeKinescopeVideo(
 		}
 	}, [autoSeekChangeQuality]);
 
-	const handleLoadStart = useCallback(() => {
-		onLoadStart && onLoadStart();
-		onMetricLoadStart();
-		setLoadingVideo(false);
-		setVideoStartLoad(true);
-	}, [onLoadStart]);
+	const handleLoadStart = useCallback(
+		e => {
+			onLoadStart && onLoadStart(e);
+			onMetricLoadStart();
+			setLoadingVideo(false);
+			setVideoStartLoad(true);
+		},
+		[onLoadStart],
+	);
 
 	const handleLoad = useCallback(
 		(data: OnLoadData) => {
@@ -194,16 +210,16 @@ function ReactNativeKinescopeVideo(
 		[onError],
 	);
 
-	const getSelectedVideoTrack = useCallback((): VideoProperties['selectedVideoTrack'] => {
+	const getSelectedVideoTrack = useCallback((): SelectedVideoTrack => {
 		const resolution = manifest?.qualityMap[quality]?.height;
 		if (resolution) {
 			return {
-				type: 'resolution',
+				type: SelectedVideoTrackType.RESOLUTION,
 				value: resolution,
 			};
 		}
 		return {
-			type: 'auto',
+			type: SelectedVideoTrackType.AUTO,
 		};
 	}, [quality, manifest]);
 
@@ -226,21 +242,38 @@ function ReactNativeKinescopeVideo(
 		);
 	}
 
-	const getTextTracks = () => {
+	const getTextTracks = (): TextTracks | undefined => {
 		if (Platform.OS === 'android') {
-			return textTracks ?? manifest.subtitles;
+			return textTracks ?? (manifest.subtitles as unknown as TextTracks);
 		}
 		if (!loadingVideo) {
 			return undefined;
 		}
-		return textTracks ?? manifest.subtitles;
+		return textTracks ?? (manifest.subtitles as unknown as TextTracks);
+	};
+
+	const getPosterResizeMode = (): PosterResizeModeType => {
+		switch (posterResizeMode) {
+			case 'center':
+				return PosterResizeModeType.CENTER;
+			case 'cover':
+				return PosterResizeModeType.COVER;
+			case 'repeat':
+				return PosterResizeModeType.REPEAT;
+			case 'stretch':
+				return PosterResizeModeType.STRETCH;
+			case 'contain':
+				return PosterResizeModeType.CONTAIN;
+			default:
+				return PosterResizeModeType.CONTAIN;
+		}
 	};
 
 	const getHlsLink = () => {
 		return manifest.qualityMap[quality]?.uri || manifest.hlsLink;
 	};
 
-	const getSource = () => {
+	const getSource = (): ReactVideoSource => {
 		if (Platform.OS === 'android' && manifest.dashLink) {
 			return {
 				uri: manifest.dashLink,
@@ -255,16 +288,44 @@ function ReactNativeKinescopeVideo(
 		};
 	};
 
+	const getDrmDash = (): Drm | undefined => {
+		if (!manifest.dashDrm) {
+			return undefined;
+		}
+		return {
+			...manifest.dashDrm,
+			headers: headers,
+		};
+	};
+
+	const getDrmHLS = (): Drm | undefined => {
+		if (!manifest.hlsDrm) {
+			return undefined;
+		}
+		return {
+			...manifest.hlsDrm,
+			headers: headers,
+		};
+	};
+
+	const getDrm = (): Drm | undefined => {
+		if (Platform.OS === 'android' && manifest.dashLink) {
+			return getDrmDash();
+		}
+		return getDrmHLS();
+	};
+
 	return (
 		<ReactVideo
 			ref={handleRef}
 			{...rest}
 			source={getSource()}
+			drm={getDrm()}
 			poster={manifest.posterUrl}
 			selectedTextTrack={selectedTextTrack}
 			selectedVideoTrack={getSelectedVideoTrack()}
 			textTracks={getTextTracks()}
-			posterResizeMode={posterResizeMode}
+			posterResizeMode={getPosterResizeMode()}
 			style={style}
 			paused={paused}
 			volume={volume}

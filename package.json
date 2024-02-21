@@ -29,34 +29,35 @@
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "*",
     "react": "*",
-    "react-native": ">=0.68",
-    "react-native-video": ">=5.0"
+    "react-native": "*"
   },
   "dependencies": {
     "@protobuf-ts/runtime": "^2.6.0",
+    "base-x": "^4.0.0",
+    "base64-js": "^1.5.1",
     "react-native-fetch-api": "^3.0.0",
     "react-native-polyfill-globals": "^3.1.0",
     "react-native-uuid": "^2.0.1",
+    "react-native-video": "^6.0.0-beta.5",
     "text-encoding": "^0.7.0",
     "web-streams-polyfill": "^3.2.1"
   },
   "devDependencies": {
-    "@react-native-async-storage/async-storage": "^1.17.6",
-    "@react-native-community/bob": "^0.17.1",
-    "@types/react-native": "^0.67.7",
-    "@types/react-native-video": "^5.0.13",
-    "prettier": "^2.6.2",
-    "typescript": "^4.4.4"
+    "@react-native-async-storage/async-storage": "^1.22.0",
+    "@types/react-native": "^0.69.26",
+    "prettier": "^2.8.8",
+    "react-native-builder-bob": "^0.23.2",
+    "typescript": "^4.9.5"
   },
   "resolutions": {
-    "@types/react": "^17"
+    "@types/react": "~18.0.0"
   },
   "files": [
     "src",
     "dist",
     "tsconfig.json"
   ],
-  "@react-native-community/bob": {
+  "react-native-builder-bob": {
     "source": "src",
     "output": "dist",
     "targets": [

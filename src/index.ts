@@ -4,7 +4,7 @@ import {polyfill as polyfillReadableStream} from 'react-native-polyfill-globals/
 polyfillReadableStream();
 polyfillEncoding();
 
-import ReactNativeKinescopeVideo from './components/video';
+import ReactNativeKinescopeVideo, {ReactNativeKinescopeVideoProps} from './components/video';
 export default ReactNativeKinescopeVideo;
 
 import {
@@ -22,4 +22,8 @@ export type {
 	SubtitleTypes,
 	QualityTypes,
 	QualityNameTypes,
+	ReactNativeKinescopeVideoProps,
 };
+
+import {OnLoadData, SelectedTrackType} from 'react-native-video';
+export {OnLoadData, SelectedTrackType};

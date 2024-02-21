@@ -7,45 +7,17 @@
 Using npm:
 
 ```sh
-npm --save install @kinescope/react-native-kinescope-video react-native-video @react-native-async-storage/async-storage
+npm --save install @kinescope/react-native-kinescope-video react-native-video@^6.0.0-beta.5 @react-native-async-storage/async-storage
 ```
 
 Using yarn:
 
 ```sh
-yarn add @kinescope/react-native-kinescope-video react-native-video @react-native-async-storage/async-storage
+yarn add @kinescope/react-native-kinescope-video react-native-video@^6.0.0-beta.5 @react-native-async-storage/async-storage
 ```
 
 ## Useful resources
-- [react-native-video](https://github.com/react-native-video/react-native-video/blob/master/API.md)
-
-## Install android (react-native >= 0.68.0)
-
-### Use exoplayer
-```javascript
-//file: react-native.config.js
-module.exports = {
-	dependencies: {
-		'react-native-video': {
-			platforms: {
-				android: {
-					sourceDir: '../node_modules/react-native-video/android-exoplayer',
-				},
-			},
-		},
-	},
-};
-```
-or
-```
-// file: android/settings.gradle
-
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
-
-include ':react-native-video'
-// project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android')
-project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android-exoplayer')
-```
+- [react-native-video](https://react-native-video.github.io/react-native-video)
 
 ### Packages storage
 ```
@@ -64,9 +36,8 @@ allprojects {
 npx pod-install
 ```
 
-## Props including [react-native-video](https://github.com/react-native-video/react-native-video/blob/master/API.md#configurable-props)
+## Props including [react-native-video](https://react-native-video.github.io/react-native-video/component/props)
 ```
-// Props
 preload?: boolean;
 videoId: string;
 posterResizeMode?: ImageResizeMode;
@@ -74,8 +45,11 @@ externalId?: string;
 quality?: QualityTypes;
 autoSeekChangeQuality?: boolean; // default: true; iOS only
 referer?: string;
+drmAuthToken?: string;
+```
 
-// Events
+## Events including [react-native-video](https://react-native-video.github.io/react-native-video/component/events)
+```
 onManifestLoadStart?: () => void;
 onManifestLoad?: (manifest: ManifestEventLoadTypes) => void;
 onManifestError?: (error: unknown) => void;
