@@ -1,6 +1,6 @@
 {
   "name": "@kinescope/react-native-kinescope-video",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A <ReactNativeKinescopeVideo /> element for react-native",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
