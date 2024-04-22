@@ -130,6 +130,7 @@ export default function useManifest({
 	const headers = useMemo(() => {
 		return {
 			Referer: referer,
+			'x-drm-type': 'widevine',
 		};
 	}, [referer]);
 
