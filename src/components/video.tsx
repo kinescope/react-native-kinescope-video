@@ -117,7 +117,6 @@ function ReactNativeKinescopeVideo(
 	const headers = useMemo(() => {
 		return {
 			Referer: referer,
-			'x-drm-type': 'widevine',
 		};
 	}, [referer]);
 
@@ -279,7 +278,10 @@ function ReactNativeKinescopeVideo(
 			return {
 				uri: manifest.dashLink,
 				type: 'mpd',
-				headers: headers,
+				headers: {
+					...headers,
+					'x-drm-type': 'widevine',
+				},
 			};
 		}
 		return {
@@ -295,7 +297,10 @@ function ReactNativeKinescopeVideo(
 		}
 		return {
 			...manifest.dashDrm,
-			headers: headers,
+			headers: {
+				...headers,
+				'x-drm-type': 'widevine',
+			},
 		};
 	};
 
