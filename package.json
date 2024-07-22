@@ -43,13 +43,13 @@
     "web-streams-polyfill": "^3.2.1"
   },
   "devDependencies": {
-    "@react-native-async-storage/async-storage": "^1.22.0",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@types/react": "~18.0.0",
     "prettier": "^2.8.8",
     "react": "18.2.0",
     "react-native": "0.72.5",
     "react-native-builder-bob": "^0.23.2",
-    "react-native-video": "^6.0.0-beta.5",
+    "react-native-video": "^6.4.2",
     "typescript": "^4.8.3"
   },
   "resolutions": {

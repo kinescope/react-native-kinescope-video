@@ -7,13 +7,13 @@
 Using npm:
 
 ```sh
-npm --save install @kinescope/react-native-kinescope-video react-native-video@^6.0.0-beta.5 @react-native-async-storage/async-storage
+npm --save install @kinescope/react-native-kinescope-video react-native-video@6.4.2 @react-native-async-storage/async-storage
 ```
 
 Using yarn:
 
 ```sh
-yarn add @kinescope/react-native-kinescope-video react-native-video@^6.0.0-beta.5 @react-native-async-storage/async-storage
+yarn add @kinescope/react-native-kinescope-video react-native-video@6.4.2 @react-native-async-storage/async-storage
 ```
 
 ## Useful resources
@@ -66,3 +66,12 @@ The video is uploading right away.
 #### externalId
 For analytics
 
+#### fix TS2786: 'Video' cannot be used as a JSX component.
+Add below in .tsconfig.json --> compilerOptions
+```
+"compilerOptions": {
+    "paths": {
+      "react": [ "./node_modules/@types/react" ]
+    }
+ }
+```
