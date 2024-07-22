@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/kinescope/react-native-kinescope-video/compare/v1.2.6...v1.3.0) (2024-07-22)
+
+### Update
+
+* react-native-video ([f6fe762](https://github.com/kinescope/react-native-kinescope-video/commit/f6fe7629cff5f42d94b30f3dd089899b2aa63a18))
+
 ### [1.2.6](https://github.com/kinescope/react-native-kinescope-video/compare/v1.2.5...v1.2.6) (2024-04-22)
 
 ### Bug Fixes
