@@ -42,6 +42,7 @@ export type ReactNativeKinescopeVideoProps = ReactVideoPropsOmit &
 		autoSeekChangeQuality?: boolean; // ios only
 		referer?: string;
 		drmAuthToken?: string;
+		startPosition?: number;
 	};
 
 function ReactNativeKinescopeVideo(
@@ -51,6 +52,7 @@ function ReactNativeKinescopeVideo(
 	const {
 		preload,
 		videoId,
+		startPosition,
 		posterResizeMode,
 		externalId,
 		quality = 'auto',
@@ -277,6 +279,7 @@ function ReactNativeKinescopeVideo(
 		if (Platform.OS === 'android' && manifest.dashLink) {
 			return {
 				uri: manifest.dashLink,
+				startPosition: startPosition,
 				type: 'mpd',
 				headers: {
 					...headers,
@@ -286,6 +289,7 @@ function ReactNativeKinescopeVideo(
 		}
 		return {
 			uri: getHlsLink(),
+			startPosition: startPosition,
 			type: 'm3u8',
 			headers: headers,
 		};
