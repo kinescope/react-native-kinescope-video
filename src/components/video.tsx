@@ -84,7 +84,6 @@ function ReactNativeKinescopeVideo(
 	const videoRef = useRef<VideoRef>();
 	const seekQuality = useRef<number>(0);
 
-	const [loadingVideo, setLoadingVideo] = useState<boolean>(false);
 	const [videoStartLoad, setVideoStartLoad] = useState(false);
 	const {loading, manifest} = useManifest({
 		videoId,
@@ -122,7 +121,6 @@ function ReactNativeKinescopeVideo(
 
 	useEffect(() => {
 		seekQuality.current = 0;
-		setLoadingVideo(false);
 		setVideoStartLoad(false);
 	}, [videoId]);
 
@@ -154,7 +152,6 @@ function ReactNativeKinescopeVideo(
 		e => {
 			onLoadStart && onLoadStart(e);
 			onMetricLoadStart();
-			setLoadingVideo(false);
 			setVideoStartLoad(true);
 		},
 		[onLoadStart],
@@ -164,7 +161,6 @@ function ReactNativeKinescopeVideo(
 		(data: OnLoadData) => {
 			onLoad && onLoad(data);
 			onMetricLoad(data);
-			setLoadingVideo(true);
 			applySeek();
 		},
 		[onLoad, applySeek],
@@ -243,10 +239,10 @@ function ReactNativeKinescopeVideo(
 	}
 
 	const getTextTracks = (): TextTracks | undefined => {
-		if (Platform.OS === 'android') {
-			return textTracks ?? (manifest.subtitles as unknown as TextTracks);
-		}
-		if (!loadingVideo) {
+		// On iOS subtitles come from the HLS manifest. react-native-video ignores
+		// sideloaded tracks for HLS, and with a quality URL it builds an
+		// AVMutableComposition, which cannot play HLS.
+		if (Platform.OS === 'ios') {
 			return undefined;
 		}
 		return textTracks ?? (manifest.subtitles as unknown as TextTracks);

@@ -49,9 +49,7 @@ export class MetricQueue {
 		});
 		const batchData = Batch.toBinary(batchMessage);
 
-		fetch(url, {body: batchData, method: 'POST', keepalive: true}).then(() => {
-			console.log('MetricQueue fetch');
-		});
+		fetch(url, {body: batchData, method: 'POST', keepalive: true}).catch(() => {});
 
 		this.queue.clear();
 	};

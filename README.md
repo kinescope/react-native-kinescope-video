@@ -7,14 +7,17 @@
 Using npm:
 
 ```sh
-npm --save install @kinescope/react-native-kinescope-video react-native-video@6.4.2 @react-native-async-storage/async-storage
+npm --save install @kinescope/react-native-kinescope-video react-native-video@^6.19.0 @react-native-async-storage/async-storage
 ```
 
 Using yarn:
 
 ```sh
-yarn add @kinescope/react-native-kinescope-video react-native-video@6.4.2 @react-native-async-storage/async-storage
+yarn add @kinescope/react-native-kinescope-video react-native-video@^6.19.0 @react-native-async-storage/async-storage
 ```
+
+### Known limitations
+- Android: subtitles are not displayed with react-native-video 6.16.0 and later because of an upstream regression ([react-native-video#4792](https://github.com/TheWidlarzGroup/react-native-video/issues/4792)).
 
 ## Useful resources
 - [react-native-video](https://react-native-video.github.io/react-native-video)
