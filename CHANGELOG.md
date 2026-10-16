@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.3](https://github.com/kinescope/react-native-kinescope-video/compare/v1.3.2...v1.3.3) (2026-10-16)
+
+### Bug Fixes
+
+* drm: `drmAuthToken` passed after mount was ignored, license requests were sent with an empty token
+
 ### [1.3.2](https://github.com/kinescope/react-native-kinescope-video/compare/v1.3.1...v1.3.2) (2026-10-02)
 
 ### Bug Fixes

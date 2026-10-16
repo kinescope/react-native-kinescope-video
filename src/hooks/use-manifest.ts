@@ -161,7 +161,7 @@ export default function useManifest({
 		setManifest(null);
 		onManifestLoadStart && onManifestLoadStart();
 		getManifest();
-	}, [videoId, headers]);
+	}, [videoId, headers, drmAuthToken]);
 
 	return {
 		loading: loading,
